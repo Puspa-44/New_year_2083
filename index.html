@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy New Year 2083 — नयाँ वर्ष २०८३</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Exo+2:ital,wght@0,200;0,300;0,400;0,600;1,300&family=Noto+Sans+Devanagari:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Custom Cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- ══════════════════════════════════
+     LOADER — Loading screen
+     पेज load हुँदा देखिने screen
+══════════════════════════════════ -->
+<div id="loader" role="status" aria-label="Loading">
+  <div class="ld-rings">
+    <svg viewBox="0 0 190 190" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle class="ld-ring ra" cx="95" cy="95" r="85"/>
+      <circle class="ld-ring rb" cx="95" cy="95" r="60"/>
+      <circle class="ld-ring rc" cx="95" cy="95" r="35"/>
+      <circle class="ld-ring rd" cx="95" cy="95" r="19"/>
+      <circle class="ld-ring re" cx="95" cy="95" r="8"/>
+    </svg>
+    <div class="ld-mid">
+      <div class="ld-mid-num" aria-label="२०८३">२०८३</div>
+    </div>
+  </div>
+  <div class="ld-title">Happy New Year</div>
+  <div class="ld-sub">नयाँ वर्षमा स्वागत छ</div>
+  <div class="ld-bar-wrap"><div class="ld-bar" id="ld-bar"></div></div>
+  <div class="ld-pct" id="ldpct" aria-live="polite">0%</div>
+</div>
+
+<!-- ══════════════════════════════════
+     BACKGROUND CANVASES
+     पछाडि देखिने animation हरू
+══════════════════════════════════ -->
+<canvas id="bg-c"   aria-hidden="true"></canvas>
+<canvas id="fw-c"   aria-hidden="true"></canvas>
+<canvas id="ribbon-c" aria-hidden="true"></canvas>
+
+<!-- ══════════════════════════════════
+     HERO SECTION — मुख्य section
+══════════════════════════════════ -->
+<section class="hero" id="home">
+  <div class="hero-halo" aria-hidden="true"></div>
+
+  <p class="h-eyebrow">✦ नयाँ वर्ष २०८३ को हार्दिक शुभकामना ✦</p>
+  <p class="h-sub-eye">BIKRAM SAMBAT &nbsp;•&nbsp; BAISAKH 1 &nbsp;•&nbsp; NEPAL 🇳🇵</p>
+
+  <div class="h-year-wrap">
+    <div class="h-year-echo" aria-hidden="true">2083</div>
+    <h1 class="h-year">2083</h1>
+  </div>
+
+  <p class="h-nep">नयाँ वर्ष २०८३</p>
+  <p class="h-eng">Happy New Year — Shubha Naya Barsha</p>
+
+  <div class="h-divider" aria-hidden="true">
+    <span></span><em>✦</em><span></span>
+  </div>
+
+  <p class="h-msg">
+    नयाँ वर्षले तपाईंको जीवनमा<br>
+    सुख, समृद्धि र खुशी ल्याओस् ।
+  </p>
+
+  <div class="scroll-cue" aria-label="Scroll down">
+    <div class="scroll-mouse"></div>
+    <p>SCROLL</p>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     COUNTDOWN — नयाँ वर्षसम्मको समय
+══════════════════════════════════ -->
+<section id="countdown" aria-labelledby="cd-heading">
+  <div class="cd-wrap">
+    <div class="sec-label">BAISAKH 1, 2083 BS</div>
+    <h2 class="sec-title" id="cd-heading">Countdown to New Year</h2>
+
+    <!-- यो div countdown चलिरहेको बेला देखिन्छ -->
+    <div class="cd-grid" id="cd-grid">
+      <div class="cd-card">
+        <span class="cd-num" id="cd-d">00</span>
+        <div class="cd-sep">Days</div>
+        <div class="cd-nep">दिन</div>
+      </div>
+      <div class="cd-card">
+        <span class="cd-num" id="cd-h">00</span>
+        <div class="cd-sep">Hours</div>
+        <div class="cd-nep">घण्टा</div>
+      </div>
+      <div class="cd-card">
+        <span class="cd-num" id="cd-m">00</span>
+        <div class="cd-sep">Minutes</div>
+        <div class="cd-nep">मिनेट</div>
+      </div>
+      <div class="cd-card">
+        <span class="cd-num" id="cd-s">00</span>
+        <div class="cd-sep">Seconds</div>
+        <div class="cd-nep">सेकेन्ड</div>
+      </div>
+    </div>
+
+    <!-- नयाँ वर्ष आइसकेपछि यो message देखिन्छ -->
+    <div class="cd-arrived" id="cd-arrived" hidden>
+      <div class="cd-arrived-emoji">🎉🎊🥳</div>
+      <div class="cd-arrived-title">नयाँ वर्ष आयो!</div>
+      <div class="cd-arrived-sub">शुभ नयाँ वर्ष २०८३ — Happy New Year 2083!</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     MARQUEE — चल्ने text पट्टी
+══════════════════════════════════ -->
+<div class="marquee-sec" aria-hidden="true">
+  <div class="mq-track">
+    <span>शुभ नयाँ वर्ष २०८३</span>
+    <span class="ac">✦ HAPPY NEW YEAR 2083 ✦</span>
+    <span>नयाँ वर्षको शुभकामना</span>
+    <span class="ac">✦ BAISAKH 1, 2083 ✦</span>
+    <span>सुख समृद्धिको कामना</span>
+    <span class="ac">✦ NEPAL 🇳🇵 ✦</span>
+    <!-- Duplicate for seamless looping -->
+    <span>शुभ नयाँ वर्ष २०८३</span>
+    <span class="ac">✦ HAPPY NEW YEAR 2083 ✦</span>
+    <span>नयाँ वर्षको शुभकामना</span>
+    <span class="ac">✦ BAISAKH 1, 2083 ✦</span>
+    <span>सुख समृद्धिको कामना</span>
+    <span class="ac">✦ NEPAL 🇳🇵 ✦</span>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     WISHES — शुभकामना cards
+══════════════════════════════════ -->
+<section id="wishes" aria-labelledby="wishes-heading">
+  <div class="w-inner">
+    <div class="sec-label" style="justify-content:center;display:flex">HEARTFELT BLESSINGS</div>
+    <h2 class="sec-title" id="wishes-heading">New Year Wishes</h2>
+    <div class="w-grid">
+
+      <article class="w-card" data-d="0">
+        <div class="w-blob" aria-hidden="true"></div>
+        <span class="w-icon" aria-hidden="true">🌸</span>
+        <h3 class="w-title">Joy &amp; Happiness</h3>
+        <p class="w-text">May every sunrise of 2083 bring renewed joy, laughter and moments that take your breath away.</p>
+        <p class="w-nep">खुशी र आनन्दले भरिपूर्ण नयाँ वर्षको कामना।</p>
+      </article>
+
+      <article class="w-card" data-d="110">
+        <div class="w-blob" aria-hidden="true"></div>
+        <span class="w-icon" aria-hidden="true">💰</span>
+        <h3 class="w-title">Prosperity</h3>
+        <p class="w-text">May abundance overflow — in wealth, wisdom, love and all riches that truly matter in life.</p>
+        <p class="w-nep">समृद्धि र सफलताले भरिएको नयाँ वर्ष होस्।</p>
+      </article>
+
+      <article class="w-card" data-d="220">
+        <div class="w-blob" aria-hidden="true"></div>
+        <span class="w-icon" aria-hidden="true">🏔️</span>
+        <h3 class="w-title">Strength</h3>
+        <p class="w-text">Like the great Himalayas, may you stand tall against every challenge and conquer your peaks.</p>
+        <p class="w-nep">हिमालझैँ अटल र दृढ रहनुहोस्।</p>
+      </article>
+
+      <article class="w-card" data-d="330">
+        <div class="w-blob" aria-hidden="true"></div>
+        <span class="w-icon" aria-hidden="true">❤️</span>
+        <h3 class="w-title">Love &amp; Unity</h3>
+        <p class="w-text">May your bonds grow stronger, family flourish, and love light every corner of your world.</p>
+        <p class="w-nep">माया र सद्भावले भरिएको परिवार होस्।</p>
+      </article>
+
+      <article class="w-card" data-d="440">
+        <div class="w-blob" aria-hidden="true"></div>
+        <span class="w-icon" aria-hidden="true">🌟</span>
+        <h3 class="w-title">New Horizons</h3>
+        <p class="w-text">2083 is your canvas — paint it with bold dreams, adventures and victories never imagined before.</p>
+        <p class="w-nep">नयाँ सपना र नयाँ उपलब्धिहरू प्राप्त होस्।</p>
+      </article>
+
+      <article class="w-card" data-d="550">
+        <div class="w-blob" aria-hidden="true"></div>
+        <span class="w-icon" aria-hidden="true">🕊️</span>
+        <h3 class="w-title">Peace of Mind</h3>
+        <p class="w-text">May your spirit find serenity, your mind clarity, and your heart the peace it deserves.</p>
+        <p class="w-nep">मन र आत्मामा शान्ति र सुकुनको कामना।</p>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════
+     CELEBRATION BURST — उत्सव section
+══════════════════════════════════ -->
+<div class="burst">
+  <div class="burst-emojis" aria-hidden="true">
+    <span>🎆</span><span>🎇</span><span>🥳</span>
+    <span>🎉</span><span>🎊</span><span>🪔</span>
+    <span>🌺</span><span>🎐</span><span>✨</span>
+  </div>
+  <p class="burst-title">Celebrate · Rejoice · Prosper</p>
+  <p class="burst-nep">उत्सव मनाऔँ &nbsp;·&nbsp; खुशी साझा गरौँ &nbsp;·&nbsp; समृद्ध बनौँ</p>
+</div>
+
+<!-- ══════════════════════════════════
+     QUOTE — प्रेरणादायी उद्धरण
+══════════════════════════════════ -->
+<div class="quote-sec">
+  <div class="q-inner">
+    <span class="q-mark" aria-hidden="true">"</span>
+    <blockquote class="q-text">
+      हरेक नयाँ वर्ष एउटा नयाँ अवसर हो —<br>
+      आफ्नो सपनाहरू पूरा गर्न,<br>
+      आफ्नो जीवन बदल्न र<br>
+      नयाँ उचाइमा पुग्न ।
+    </blockquote>
+    <div class="q-deco" aria-hidden="true"><span></span><em>✦</em><span></span></div>
+    <p class="q-author">— नयाँ वर्ष २०८३ को अवसरमा</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     FOOTER — तलको भाग
+══════════════════════════════════ -->
+<footer>
+  <div class="ft-bg-glow" aria-hidden="true"></div>
+  <div class="ft-watermark" aria-hidden="true">२०८३</div>
+  <div class="ft-divider" aria-hidden="true"></div>
+  <p class="ft-dev-txt">Developed with <span class="ft-heart" aria-hidden="true">♥</span> by</p>
+  <p class="ft-name">Puspa Raj Chaudhary</p>
+  <p class="ft-handle">@Puspa Raj Chaudhary</p>
+  <p class="ft-copy">नयाँ वर्ष २०८३ &nbsp;•&nbsp; Happy New Year 2083 &nbsp;•&nbsp; Nepal 🇳🇵</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>

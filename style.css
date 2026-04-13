@@ -1,0 +1,843 @@
+/* ══════════════════════════════════════════════════════════
+   style.css — नयाँ वर्ष २०८३
+   Happy New Year 2083 | Bikram Sambat
+
+   SECTIONS:
+   1. Reset & CSS Variables (root values)
+   2. Custom Cursor
+   3. Loader (loading screen)
+   4. Canvas backgrounds
+   5. Hero Section
+   6. Countdown Section
+   7. Marquee (scrolling text)
+   8. Wishes / Cards Section
+   9. Celebration Burst
+   10. Quote Section
+   11. Footer
+   12. Utility animations
+   13. Responsive (mobile)
+══════════════════════════════════════════════════════════ */
+
+
+/* ══ 1. RESET & ROOT VARIABLES ═══════════════════════════ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* रङहरू — Color palette */
+  --gold:    #FFD700;
+  --gold2:   #FF8C00;
+  --gold3:   #FFF1A0;
+  --crimson: #FF1744;
+  --electric:#00E5FF;
+  --violet:  #BF00FF;
+  --rose:    #FF6B9D;
+  --lime:    #B5FF00;
+  --deep:    #020209;  /* सबैभन्दा गाढा background */
+  --mid:     #07071A;
+
+  /* Timing — animation speed */
+  --ease-spring: cubic-bezier(0.34, 1.5, 0.64, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--deep);
+  color: #fff;
+  font-family: 'Exo 2', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  cursor: none; /* Custom cursor प्रयोग हुन्छ */
+}
+
+
+/* ══ 2. CUSTOM CURSOR ════════════════════════════════════ */
+/* Mouse pointer को ठाउँमा golden dot र ring देखिन्छ */
+
+#cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  background: var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: screen;
+  transition: transform 0.08s;
+}
+
+#cursor-ring {
+  position: fixed;
+  width: 30px; height: 30px;
+  border: 1.5px solid rgba(255, 215, 0, 0.35);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 99998;
+  transform: translate(-50%, -50%);
+  transition: left 0.15s ease, top 0.15s ease, width 0.2s, height 0.2s;
+}
+
+
+/* ══ 3. LOADER ═══════════════════════════════════════════ */
+/* पेज खुल्दा देखिने loading screen */
+
+#loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--deep);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  transition: opacity 1s ease, visibility 1s ease;
+}
+
+/* Loader fade-out class — JS ले थप्छ */
+#loader.out {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Spinning rings — loading indicator */
+.ld-rings {
+  position: relative;
+  width: 190px; height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ld-rings svg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+}
+
+.ld-ring {
+  fill: none;
+  stroke-linecap: round;
+}
+
+/* प्रत्येक ring को आफ्नै रङ र animation छ */
+.ra { stroke: var(--gold);    stroke-width: 3;   stroke-dasharray: 535; animation: rspin 2s   linear infinite,          rdash  2s   ease-in-out infinite; }
+.rb { stroke: var(--electric);stroke-width: 2.5; stroke-dasharray: 375; animation: rspin 1.5s linear infinite reverse,   rdash2 1.7s ease-in-out infinite 0.25s; }
+.rc { stroke: var(--violet);  stroke-width: 2;   stroke-dasharray: 220; animation: rspin 1s   linear infinite,          rdash3 1.5s ease-in-out infinite 0.5s; }
+.rd { stroke: var(--rose);    stroke-width: 1.5; stroke-dasharray: 120; animation: rspin 0.8s linear infinite reverse,   rdash4 1.3s ease-in-out infinite 0.75s; }
+.re { stroke: var(--lime);    stroke-width: 1;   stroke-dasharray: 50;  animation: rspin 0.5s linear infinite,          rdash5 1.1s ease-in-out infinite 1s; }
+
+@keyframes rspin  { to   { transform: rotate(360deg); } }
+@keyframes rdash  { 0%,100%{ stroke-dashoffset:535 } 50%{ stroke-dashoffset:90  } }
+@keyframes rdash2 { 0%,100%{ stroke-dashoffset:375 } 50%{ stroke-dashoffset:70  } }
+@keyframes rdash3 { 0%,100%{ stroke-dashoffset:220 } 50%{ stroke-dashoffset:40  } }
+@keyframes rdash4 { 0%,100%{ stroke-dashoffset:120 } 50%{ stroke-dashoffset:20  } }
+@keyframes rdash5 { 0%,100%{ stroke-dashoffset:50  } 50%{ stroke-dashoffset:8   } }
+
+/* Rings को बिचमा देखिने "२०८३" number */
+.ld-mid { position: relative; z-index: 2; text-align: center; }
+
+.ld-mid-num {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: 2.4rem; font-weight: 700;
+  background: linear-gradient(135deg, var(--gold3), var(--gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: glowMid 1.6s ease-in-out infinite;
+}
+
+@keyframes glowMid {
+  0%, 100% { filter: drop-shadow(0 0 6px  rgba(255,215,0,0.3)); }
+  50%       { filter: drop-shadow(0 0 22px rgba(255,215,0,1));   }
+}
+
+.ld-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.3rem, 4vw, 2.2rem);
+  background: linear-gradient(90deg, var(--gold3), var(--gold), var(--gold2), var(--gold3));
+  background-size: 300% auto;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shineTxt 2s linear infinite;
+  letter-spacing: 0.08em; text-align: center;
+}
+
+.ld-sub {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  color: rgba(255,255,255,0.35);
+  font-size: 0.85rem;
+  letter-spacing: 0.4em;
+  text-align: center;
+  animation: blinkAnim 1.5s ease-in-out infinite;
+}
+
+@keyframes blinkAnim { 0%,100%{opacity:0.25} 50%{opacity:0.8} }
+
+/* Progress bar */
+.ld-bar-wrap {
+  width: 240px; height: 2px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.ld-bar {
+  height: 100%; width: 0;
+  background: linear-gradient(90deg, var(--violet), var(--gold), var(--electric));
+  background-size: 200% 100%;
+  animation: bfill 2.5s cubic-bezier(0.2, 0, 0.2, 1) forwards, shineTxt 1s linear infinite;
+}
+
+@keyframes bfill { to { width: 100%; } }
+
+.ld-pct {
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  color: rgba(255,255,255,0.2);
+}
+
+
+/* ══ 4. CANVAS BACKGROUNDS ═══════════════════════════════ */
+/* Stars, fireworks, र confetti canvas हरू */
+
+#bg-c, #fw-c, #ribbon-c {
+  position: fixed; inset: 0;
+  pointer-events: none;
+}
+#bg-c     { z-index: 0; }  /* Stars — सबैभन्दा पछाडि */
+#fw-c     { z-index: 1; }  /* Fireworks */
+#ribbon-c { z-index: 2; }  /* Confetti ribbons */
+
+
+/* ══ 5. HERO SECTION ═════════════════════════════════════ */
+/* पहिलो page — मुख्य greeting */
+
+.hero {
+  position: relative; z-index: 10;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Subtle background glow — पछाडिको प्रकाश */
+.hero-halo {
+  position: absolute; inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 90% 60% at 50% -5%,  rgba(255,215,0,0.2),  transparent 55%),
+    radial-gradient(ellipse 50% 40% at 5%  90%,  rgba(0,229,255,0.1),  transparent 50%),
+    radial-gradient(ellipse 40% 35% at 95% 85%,  rgba(191,0,255,0.08), transparent 50%);
+}
+
+/* तैरिने lanterns (🏮 🪔 etc) */
+.lantern {
+  position: absolute;
+  pointer-events: none;
+  animation: lanUp linear forwards;
+}
+
+@keyframes lanUp {
+  0%   { transform: translateY(0)       rotate(-8deg); opacity: 0;   }
+  5%   { opacity: 0.8; }
+  95%  { opacity: 0.8; }
+  100% { transform: translateY(-110vh)  rotate(8deg);  opacity: 0;   }
+}
+
+/* Hero text animations — एक एक गरेर देखिन्छन् */
+.h-eyebrow {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: clamp(0.75rem, 2vw, 0.95rem);
+  letter-spacing: 0.5em;
+  color: var(--gold);
+  opacity: 0;
+  animation: rUp 1s ease 3.2s forwards;
+  margin-bottom: 10px;
+}
+
+.h-sub-eye {
+  font-family: 'Exo 2', sans-serif; font-weight: 200;
+  font-size: clamp(0.6rem, 1.5vw, 0.75rem);
+  letter-spacing: 0.7em;
+  color: var(--electric);
+  opacity: 0;
+  animation: rUp 1s ease 3.4s forwards;
+  margin-bottom: 22px;
+}
+
+/* "2083" को ठूलो heading */
+.h-year-wrap {
+  position: relative; opacity: 0;
+  animation: rUp 1.2s ease 3.6s forwards;
+}
+
+.h-year {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(5rem, 21vw, 19rem);
+  font-weight: 900; line-height: 0.88;
+  background: linear-gradient(180deg, #fff 0%, var(--gold3) 25%, var(--gold) 60%, var(--gold2) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: yearGlow 4s ease-in-out 5s infinite;
+  letter-spacing: -0.02em;
+}
+
+/* Shadow echo — पछाडि देखिने छाया */
+.h-year-echo {
+  position: absolute; inset: 0;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(5rem, 21vw, 19rem);
+  font-weight: 900; line-height: 0.88; letter-spacing: -0.02em;
+  -webkit-text-stroke: 1.5px rgba(255,215,0,0.12);
+  color: transparent;
+  transform: translate(5px, 5px);
+  animation: echoFlicker 4s ease-in-out 5s infinite;
+}
+
+@keyframes yearGlow {
+  0%,100% { filter: drop-shadow(0 0  40px rgba(255,200,0,0.35)); }
+  50%     { filter: drop-shadow(0 0 130px rgba(255,200,0,0.85)) drop-shadow(0 0 220px rgba(255,100,0,0.35)); }
+}
+@keyframes echoFlicker { 0%,100%{opacity:0.25} 50%{opacity:0.7} }
+
+.h-nep {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: clamp(1.3rem, 3.5vw, 2.6rem); font-weight: 600;
+  background: linear-gradient(90deg, var(--gold3), #fff, var(--gold3));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  opacity: 0; animation: rUp 1s ease 3.8s forwards;
+  margin-top: 6px;
+}
+
+.h-eng {
+  font-family: 'Exo 2', sans-serif; font-weight: 300; font-style: italic;
+  font-size: clamp(0.85rem, 2.2vw, 1.3rem);
+  color: rgba(255,255,255,0.45);
+  opacity: 0; animation: rUp 1s ease 4s forwards;
+  margin-top: 8px; letter-spacing: 0.18em;
+}
+
+/* सजावटी divider रेखा */
+.h-divider {
+  display: flex; align-items: center; gap: 16px;
+  margin: 28px 0;
+  opacity: 0; animation: rUp 1s ease 4.2s forwards;
+  width: min(480px, 88vw);
+}
+.h-divider span {
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,215,0,0.5), transparent);
+}
+.h-divider em {
+  font-style: normal; font-size: 1.3rem;
+  filter: drop-shadow(0 0 10px var(--gold));
+  animation: rspin 10s linear infinite;
+}
+
+/* शुभकामना message */
+.h-msg {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: clamp(0.95rem, 2.3vw, 1.25rem);
+  color: rgba(255,255,255,0.65);
+  max-width: 540px; line-height: 1.85;
+  opacity: 0; animation: rUp 1s ease 4.4s forwards;
+}
+
+/* Scroll गर्न भन्ने संकेत */
+.scroll-cue {
+  position: absolute; bottom: 34px;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 8px;
+  opacity: 0; animation: rUp 1s ease 5.2s forwards;
+}
+.scroll-cue p {
+  font-size: 0.55rem;
+  letter-spacing: 0.55em;
+  color: rgba(255,255,255,0.2);
+}
+
+/* Mouse shape को icon */
+.scroll-mouse {
+  width: 20px; height: 32px;
+  border: 1.5px solid rgba(255,255,255,0.18);
+  border-radius: 10px;
+  display: flex; justify-content: center;
+  padding-top: 5px;
+}
+.scroll-mouse::before {
+  content: '';
+  width: 2px; height: 6px;
+  background: rgba(255,255,255,0.35);
+  border-radius: 2px;
+  animation: scrollWheel 1.8s ease-in-out infinite;
+}
+
+@keyframes scrollWheel {
+  0%   { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(9px); opacity: 0; }
+}
+
+
+/* ══ 6. COUNTDOWN SECTION ════════════════════════════════ */
+/* नयाँ वर्षसम्म कति समय बाँकी छ */
+
+#countdown {
+  position: relative; z-index: 10;
+  padding: clamp(60px, 10vw, 110px) clamp(16px, 5vw, 60px);
+}
+
+.cd-wrap { max-width: 900px; margin: 0 auto; text-align: center; }
+
+/* Section label — साना uppercase अक्षर */
+.sec-label {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 0.62rem; letter-spacing: 0.6em;
+  color: var(--electric); margin-bottom: 16px;
+}
+.sec-label::before, .sec-label::after {
+  content: ''; width: 36px; height: 1px;
+  background: rgba(0,229,255,0.35);
+}
+
+/* Section heading */
+.sec-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.6rem, 4vw, 2.8rem);
+  background: linear-gradient(90deg, #fff, var(--gold), #fff);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 44px;
+}
+
+/* Countdown cards grid */
+.cd-grid {
+  display: flex;
+  justify-content: center;
+  gap: clamp(8px, 2.5vw, 20px);
+  flex-wrap: wrap;
+}
+
+/* प्रत्येक time unit को card */
+.cd-card {
+  flex: 1; min-width: 100px; max-width: 160px;
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,215,0,0.1);
+  border-radius: 18px;
+  padding: clamp(18px, 3.5vw, 32px) 12px;
+  backdrop-filter: blur(30px);
+  position: relative; overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+}
+
+/* Card को माथि golden line */
+.cd-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.cd-card:hover {
+  transform: translateY(-8px) scale(1.04);
+  box-shadow: 0 28px 70px rgba(255,215,0,0.15);
+}
+
+/* Countdown numbers */
+.cd-num {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(2.5rem, 6.5vw, 4.5rem); font-weight: 900;
+  background: linear-gradient(180deg, #fff, var(--gold));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: block; line-height: 1;
+}
+
+/* Flip animation — number बदलिँदा */
+.cd-num.tick { animation: flipCard 0.32s cubic-bezier(0.4, 0, 0.2, 1); }
+
+@keyframes flipCard {
+  0%   { transform: rotateX(-90deg) scale(0.75); opacity: 0; }
+  65%  { transform: rotateX(8deg)   scale(1.06); }
+  100% { transform: rotateX(0)      scale(1);    opacity: 1; }
+}
+
+.cd-sep  { font-size: 0.55rem; letter-spacing: 0.45em; color: rgba(255,255,255,0.28); margin-top: 8px; text-transform: uppercase; }
+.cd-nep  { font-family: 'Noto Sans Devanagari', sans-serif; font-size: 0.65rem; color: rgba(255,215,0,0.35); margin-top: 4px; }
+
+/* नयाँ वर्ष आइसकेपछि देखिने message */
+.cd-arrived {
+  padding: 40px 20px; text-align: center;
+}
+.cd-arrived-emoji  { font-size: 3rem; margin-bottom: 16px; animation: bfloat 1.5s ease-in-out infinite; }
+.cd-arrived-title  { font-family: 'Noto Sans Devanagari', sans-serif; font-size: clamp(1.8rem,5vw,3rem); font-weight: 700; background: linear-gradient(90deg,var(--gold),#fff,var(--gold)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:12px; }
+.cd-arrived-sub    { font-family: 'Exo 2', sans-serif; font-size: 1rem; color: rgba(255,255,255,0.6); letter-spacing: 0.1em; }
+
+
+/* ══ 7. MARQUEE ══════════════════════════════════════════ */
+/* बाँया-दाँया सर्ने text पट्टी */
+
+.marquee-sec {
+  position: relative; z-index: 10;
+  overflow: hidden;
+  padding: clamp(30px, 5vw, 60px) 0;
+  border-top:    1px solid rgba(255,215,0,0.06);
+  border-bottom: 1px solid rgba(255,215,0,0.06);
+}
+
+.mq-track {
+  display: flex;
+  width: max-content;
+  animation: mq 22s linear infinite;
+}
+
+.mq-track:hover { animation-play-state: paused; } /* Hover गर्दा रोकिन्छ */
+
+.mq-track span {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(0.85rem, 2.5vw, 1.4rem);
+  color: rgba(255,215,0,0.18);
+  letter-spacing: 0.15em;
+  padding: 0 32px;
+  white-space: nowrap;
+}
+
+.mq-track span.ac { color: rgba(0,229,255,0.2); }
+
+@keyframes mq { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+
+/* ══ 8. WISHES / CARDS ═══════════════════════════════════ */
+/* शुभकामना cards */
+
+#wishes {
+  position: relative; z-index: 10;
+  padding: clamp(60px, 10vw, 120px) clamp(16px, 5vw, 60px);
+}
+
+.w-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
+
+.w-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  gap: clamp(14px, 2vw, 26px);
+  margin-top: 52px;
+}
+
+/* प्रत्येक card — सुरुमा लुकेको, scroll गर्दा देखिन्छ */
+.w-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 22px;
+  padding: clamp(22px, 3vw, 34px);
+  position: relative; overflow: hidden;
+  text-align: left;
+  opacity: 0;
+  transform: translateY(44px) scale(0.96);
+  transition: opacity 0.7s ease, transform 0.7s var(--ease-spring), box-shadow 0.5s;
+}
+
+/* Scroll intersection observer ले 'vis' class थप्छ */
+.w-card.vis {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Hover गर्दा mouse position मा glow */
+.w-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  border-radius: 22px;
+  background: radial-gradient(circle at var(--mx, 50%) var(--my, 50%), rgba(255,215,0,0.07), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+.w-card:hover::before { opacity: 1; }
+.w-card:hover {
+  box-shadow: 0 28px 70px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,215,0,0.13);
+  transform: translateY(-10px) scale(1.02);
+}
+
+/* Card corner blur blob */
+.w-blob {
+  position: absolute; top: -24px; right: -24px;
+  width: 90px; height: 90px;
+  border-radius: 50%;
+  filter: blur(36px); opacity: 0.14;
+  pointer-events: none;
+}
+
+/* प्रत्येक card को blob को रङ फरक */
+.w-card:nth-child(1) .w-blob { background: var(--gold);    }
+.w-card:nth-child(2) .w-blob { background: var(--electric);}
+.w-card:nth-child(3) .w-blob { background: var(--crimson); }
+.w-card:nth-child(4) .w-blob { background: var(--violet);  }
+.w-card:nth-child(5) .w-blob { background: var(--rose);    }
+.w-card:nth-child(6) .w-blob { background: var(--lime);    }
+
+/* Card icon — तैरिन्छ */
+.w-icon {
+  font-size: 2.6rem; margin-bottom: 14px; display: block;
+  filter: drop-shadow(0 0 12px rgba(255,200,0,0.55));
+  animation: wfloat 3s ease-in-out infinite;
+}
+
+/* सबैको animation delay फरक — एकसाथ नतैरोस् */
+.w-card:nth-child(2) .w-icon { animation-delay: 0.4s; }
+.w-card:nth-child(3) .w-icon { animation-delay: 0.8s; }
+.w-card:nth-child(4) .w-icon { animation-delay: 1.2s; }
+.w-card:nth-child(5) .w-icon { animation-delay: 1.6s; }
+.w-card:nth-child(6) .w-icon { animation-delay: 2.0s; }
+
+@keyframes wfloat {
+  0%, 100% { transform: translateY(0)   rotate(-4deg); }
+  50%       { transform: translateY(-10px) rotate(4deg); }
+}
+
+.w-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 0.9rem; color: var(--gold);
+  margin-bottom: 9px; letter-spacing: 0.05em;
+}
+.w-text { font-size: 0.86rem; color: rgba(255,255,255,0.52); line-height: 1.78; }
+.w-nep  {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: 0.78rem; color: rgba(255,215,0,0.38);
+  margin-top: 9px; line-height: 1.65;
+}
+
+
+/* ══ 9. CELEBRATION BURST ════════════════════════════════ */
+/* उत्सवी emoji section */
+
+.burst {
+  position: relative; z-index: 10;
+  padding: clamp(40px, 6vw, 80px) 20px;
+  text-align: center; overflow: hidden;
+}
+
+.burst-emojis {
+  display: flex; justify-content: center;
+  gap: clamp(10px, 2.5vw, 26px);
+  flex-wrap: wrap; margin: 36px 0;
+}
+
+.burst-emojis span {
+  display: inline-block;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  filter: drop-shadow(0 0 14px rgba(255,200,0,0.6));
+  animation: bfloat 2s ease-in-out infinite;
+}
+
+/* एक एक गरेर animation start गर्छन् */
+.burst-emojis span:nth-child(1) { animation-delay: 0.00s; }
+.burst-emojis span:nth-child(2) { animation-delay: 0.15s; }
+.burst-emojis span:nth-child(3) { animation-delay: 0.30s; }
+.burst-emojis span:nth-child(4) { animation-delay: 0.45s; }
+.burst-emojis span:nth-child(5) { animation-delay: 0.60s; }
+.burst-emojis span:nth-child(6) { animation-delay: 0.75s; }
+.burst-emojis span:nth-child(7) { animation-delay: 0.90s; }
+.burst-emojis span:nth-child(8) { animation-delay: 1.05s; }
+.burst-emojis span:nth-child(9) { animation-delay: 1.20s; }
+
+@keyframes bfloat {
+  0%, 100% { transform: translateY(0)    scale(1)    rotate(-6deg); }
+  50%       { transform: translateY(-22px) scale(1.18) rotate(6deg); }
+}
+
+.burst-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.4rem, 4vw, 3rem);
+  background: linear-gradient(90deg, var(--rose), var(--gold), var(--electric), var(--lime), var(--gold));
+  background-size: 300% auto;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shineTxt 3s linear infinite;
+  letter-spacing: 0.05em; margin-bottom: 10px;
+}
+
+.burst-nep {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  color: rgba(255,255,255,0.35);
+  font-size: clamp(0.85rem, 2vw, 1.05rem);
+  letter-spacing: 0.18em;
+}
+
+
+/* ══ 10. QUOTE SECTION ═══════════════════════════════════ */
+/* प्रेरणादायी उद्धरण */
+
+.quote-sec {
+  position: relative; z-index: 10;
+  padding: clamp(70px, 12vw, 150px) clamp(20px, 5vw, 80px);
+  text-align: center; overflow: hidden;
+}
+
+/* पछाडि ठूलो "२०८३" watermark */
+.quote-sec::before {
+  content: '२०८३';
+  position: absolute;
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: clamp(10rem, 38vw, 32rem); font-weight: 700;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,215,0,0.035);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none; user-select: none;
+  white-space: nowrap;
+  animation: bgDrift 18s ease-in-out infinite alternate;
+}
+
+@keyframes bgDrift {
+  from { letter-spacing: -0.02em; }
+  to   { letter-spacing:  0.06em; }
+}
+
+.q-inner   { position: relative; max-width: 720px; margin: 0 auto; }
+.q-mark    { font-family: Georgia, serif; font-size: 5.5rem; line-height: 0.4; color: rgba(255,215,0,0.12); display: block; margin-bottom: 18px; }
+
+.q-text {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: clamp(1.2rem, 2.8vw, 2rem);
+  color: rgba(255,255,255,0.82);
+  line-height: 1.75; font-weight: 300;
+  font-style: normal; /* blockquote italic हटाउन */
+}
+
+.q-deco {
+  display: flex; align-items: center; justify-content: center;
+  gap: 16px; margin: 24px 0 10px;
+}
+.q-deco span { width: 55px; height: 1px; background: rgba(255,215,0,0.3); }
+.q-deco em   { font-style: normal; font-size: 0.9rem; color: rgba(255,215,0,0.45); }
+
+.q-author {
+  font-size: 0.72rem;
+  letter-spacing: 0.5em;
+  color: var(--electric);
+  opacity: 0.7;
+}
+
+
+/* ══ 11. FOOTER ══════════════════════════════════════════ */
+/* तलको copyright section */
+
+footer {
+  position: relative; z-index: 10;
+  padding: clamp(60px, 8vw, 100px) 20px 44px;
+  text-align: center;
+  border-top: 1px solid rgba(255,255,255,0.03);
+  overflow: hidden;
+}
+
+.ft-bg-glow {
+  position: absolute; bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 220px;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 100%, rgba(255,215,0,0.07), transparent 65%);
+}
+
+.ft-watermark {
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  font-size: clamp(3rem, 12vw, 9rem); font-weight: 700;
+  color: rgba(255,215,0,0.035);
+  letter-spacing: 0.05em;
+  user-select: none; margin-bottom: 20px; line-height: 1;
+}
+
+.ft-divider {
+  width: min(280px, 75%); height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,215,0,0.3), transparent);
+  margin: 0 auto 30px;
+}
+
+.ft-dev-txt {
+  font-size: 0.65rem; letter-spacing: 0.55em;
+  color: rgba(255,255,255,0.22); margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.ft-heart {
+  display: inline-block; color: var(--crimson);
+  animation: heartbeat 1.3s ease-in-out infinite;
+}
+
+@keyframes heartbeat {
+  0%, 100% { transform: scale(1);    }
+  14%       { transform: scale(1.45); }
+  28%       { transform: scale(1);    }
+  42%       { transform: scale(1.25); }
+}
+
+.ft-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.1rem, 3vw, 1.7rem);
+  background: linear-gradient(90deg, var(--gold2), var(--gold3), var(--gold), var(--gold2));
+  background-size: 300% auto;
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shineTxt 3s linear infinite;
+  letter-spacing: 0.08em; margin-bottom: 6px;
+}
+
+.ft-handle {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.78rem; color: var(--electric);
+  letter-spacing: 0.3em; opacity: 0.55; margin-bottom: 34px;
+}
+
+.ft-copy {
+  font-size: 0.6rem; letter-spacing: 0.28em;
+  color: rgba(255,255,255,0.12);
+}
+
+
+/* ══ 12. UTILITY ANIMATIONS ══════════════════════════════ */
+
+/* Slide up र fade in — सबैभन्दा बढी प्रयोग हुने */
+@keyframes rUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* चम्किने text gradient animation */
+@keyframes shineTxt {
+  to { background-position: 300% center; }
+}
+
+
+/* ══ 13. RESPONSIVE (MOBILE) ══════════════════════════════ */
+/* सानो screen मा automatically मिल्छ */
+
+@media (max-width: 580px) {
+  /* Countdown cards */
+  .cd-grid      { gap: 7px; }
+  .cd-card      { min-width: 68px; padding: 14px 6px; }
+  .cd-num       { font-size: 2.2rem; }
+
+  /* Wishes — एउटै column */
+  .w-grid       { grid-template-columns: 1fr; }
+
+  /* Celebration */
+  .burst-emojis { gap: 8px; }
+
+  /* Custom cursor mobile मा लुकाउने */
+  #cursor, #cursor-ring { display: none; }
+  body { cursor: auto; }
+}
+
+/* Cursor — touch device मा hide */
+@media (hover: none) and (pointer: coarse) {
+  #cursor, #cursor-ring { display: none; }
+  body { cursor: auto; }
+}
